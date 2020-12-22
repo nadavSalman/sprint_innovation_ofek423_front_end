@@ -32,6 +32,9 @@ jobs:
           # The Flutter build release channel
           #channel: # optional, default is stable #should be modify wen publish to the web...
 
+
+
+      - run: ls
       #install dependecies :
       - run: flutter pub get
 
