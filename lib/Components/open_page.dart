@@ -25,12 +25,15 @@ class _OpenPageState extends State<OpenPage> {
   var userName = '';
 
   Widget _buildRow(BuildContext context, int index) {
+    //logic code
     if (index.isEven) {
       return ListTile(
         title: Text(
-          groups[index ~/ 2].toUpperCase(),
+          groups[index ~/ 2]
+              .toUpperCase(), //take the string from groups in index of index/2 in integer
         ),
         onTap: () {
+          // need to get from the server all the lists for the right username and right group and send to lists page
           Navigator.push(
             context,
             MaterialPageRoute(
@@ -51,7 +54,7 @@ class _OpenPageState extends State<OpenPage> {
     );
   }
 
-  _showMaterialDialog() {
+  _showCreateGroupModel() {
     showDialog(
         context: context,
         builder: (_) => new AlertDialog(
@@ -79,9 +82,6 @@ class _OpenPageState extends State<OpenPage> {
           ),
         ),
         centerTitle: true,
-        // actions: [
-        //   IconButton(icon: Icon(Icons.list), onPressed: _pushSaved),
-        // ],
       ),
       body: _buildOptions(),
       floatingActionButton: Container(
@@ -89,7 +89,7 @@ class _OpenPageState extends State<OpenPage> {
         width: 80.0,
         child: FittedBox(
           child: FloatingActionButton(
-            onPressed: _showMaterialDialog,
+            onPressed: _showCreateGroupModel,
             child: Icon(Icons.add),
             backgroundColor: Colors.black,
             tooltip: 'New group',
