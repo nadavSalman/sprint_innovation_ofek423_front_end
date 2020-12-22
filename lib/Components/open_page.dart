@@ -1,28 +1,24 @@
 import 'package:flutter/material.dart';
 import 'Lists_page.dart';
 
-class OpenPage extends StatefulWidget {
-  @override
-  _OpenPageState createState() => _OpenPageState();
-}
-
-class _OpenPageState extends State<OpenPage> {
+class OpenPageState extends StatelessWidget {
   @override
   // todo: replace the groups list with data from DB
-  final List<String> groups = [
-    "hamagnivim",
-    "ohad",
-    "ronen",
-    "yuval",
-    "hadas",
-    "hi",
-    "ohad",
-    "ronen",
-    "yuval",
-    "hadas"
+  List<String> groups = [
+    "המגניבים",
+    "צוות DevOps",
+    "הרוננים",
+    "גף תהליכי פיתוח",
+    "המגניבים",
+    "צוות DevOps",
+    "הרוננים",
+    "גף תהליכי פיתוח",
   ];
-
-  var userName = '';
+  var _userObject = '';
+  var _lists;
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  //add groups parameter to constructor
+  OpenPageState(this._userObject);
 
   Widget _buildRow(BuildContext context, int index) {
     //logic code
@@ -31,13 +27,15 @@ class _OpenPageState extends State<OpenPage> {
         title: Text(
           groups[index ~/ 2]
               .toUpperCase(), //take the string from groups in index of index/2 in integer
+          textDirection: TextDirection.rtl,
         ),
         onTap: () {
           // need to get from the server all the lists for the right username and right group and send to lists page
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ListsPage(groups, this.userName)),
+                builder: (context) =>
+                    ListsPage(groups, this._userObject, groups[index ~/ 2])),
           );
         },
       );
@@ -54,26 +52,33 @@ class _OpenPageState extends State<OpenPage> {
     );
   }
 
-  _showCreateGroupModel() {
+  void _showDialog() {
+    // flutter defined function
     showDialog(
-        context: context,
-        builder: (_) => new AlertDialog(
-              title: new Text("Material Dialog"),
-              content: new Text("Hey! fffffI'm Coflutter!"),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Close me!'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            ));
+      context: _scaffoldKey.currentContext,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Alert Dialog title"),
+          content: new Text("Alert Dialog body"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Meקונה',
@@ -84,12 +89,15 @@ class _OpenPageState extends State<OpenPage> {
         centerTitle: true,
       ),
       body: _buildOptions(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: Container(
         height: 80.0,
         width: 80.0,
         child: FittedBox(
           child: FloatingActionButton(
-            onPressed: _showCreateGroupModel,
+            onPressed: () {
+              _showDialog();
+            },
             child: Icon(Icons.add),
             backgroundColor: Colors.black,
             tooltip: 'New group',
