@@ -106,7 +106,7 @@ class ProductsListPage extends StatelessWidget {
             },
             child: Icon(Icons.edit),
             backgroundColor: Colors.black,
-            tooltip: 'New group',
+            tooltip: 'New product',
           ),
         ),
       ),
