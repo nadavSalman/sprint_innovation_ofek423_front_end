@@ -1,33 +1,25 @@
 import 'package:flutter/material.dart';
-import 'products_list_page.dart';
 
-class ListsPage extends StatelessWidget {
-  List _lists;
+class ProductsListPage extends StatelessWidget {
+  List _products = ["במבה", "ביסלי", "בייגלה"];
   var _userObject;
+  var _currListObject;
   var _currGroupObject;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  ListsPage(this._lists, this._userObject, this._currGroupObject);
+  ProductsListPage(
+      this._currListObject, this._userObject, this._currGroupObject);
 
   Widget _buildRow(BuildContext context, int index) {
     if (index.isEven) {
       return ListTile(
         title: Text(
-          _lists[index ~/ 2].toUpperCase(),
+          _products[index ~/ 2].toUpperCase(),
           textDirection: TextDirection.rtl,
           style: TextStyle(
             fontSize: 20,
           ),
         ),
-        onTap: () {
-          // need to get from the server all the lists for the right username and right group and send to lists page
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ProductsListPage(
-                    _lists[index ~/ 2], this._userObject, _currGroupObject)),
-          );
-        },
       );
     } else {
       return Divider();
@@ -39,9 +31,17 @@ class ListsPage extends StatelessWidget {
       children: <Widget>[
         new ListTile(
           title: Text(
-            this._currGroupObject,
+            this._currListObject,
             style: TextStyle(
               fontSize: 30,
+            ),
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.right,
+          ),
+          subtitle: Text(
+            " קבוצה:" + this._currGroupObject,
+            style: TextStyle(
+              fontSize: 20,
             ),
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.right,
@@ -52,7 +52,7 @@ class ListsPage extends StatelessWidget {
           shrinkWrap: true,
           padding: EdgeInsets.all(16),
           itemBuilder: _buildRow,
-          itemCount: _lists.length * 2,
+          itemCount: _products.length * 2,
         ))
       ],
     );
@@ -104,9 +104,9 @@ class ListsPage extends StatelessWidget {
             onPressed: () {
               _showDialog();
             },
-            child: Icon(Icons.add),
+            child: Icon(Icons.edit),
             backgroundColor: Colors.black,
-            tooltip: 'New List',
+            tooltip: 'New group',
           ),
         ),
       ),
