@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 
 class ListsPage extends StatelessWidget {
-  List _groups;
-  var _name;
+  final List _lists;
+  var _username;
+  var _currGroup;
+  var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  List get groups => _groups;
+  List get groups => _lists;
 
-  set groups(List value) => _groups = value;
-
-  ListsPage(this._groups, this._name);
+  ListsPage(this._lists, this._username, this._currGroup);
 
   Widget _buildRow(BuildContext context, int index) {
     if (index.isEven) {
       return ListTile(
         title: Text(
           groups[index ~/ 2].toUpperCase(),
+          textDirection: TextDirection.rtl,
         ),
-        // onTap: () {
-        //   Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //         builder: (context) => ListsPage(groups, this.userName)),
-        //   );
-        // },
       );
     } else {
       return Divider();
@@ -30,16 +24,56 @@ class ListsPage extends StatelessWidget {
   }
 
   Widget _buildOptions() {
-    return ListView.builder(
-      padding: EdgeInsets.all(16),
-      itemBuilder: _buildRow,
-      itemCount: groups.length * 2,
+    return ListView(
+      children: <Widget>[
+        new ListTile(
+          title: Text(
+            this._currGroup,
+            style: TextStyle(
+              fontSize: 30,
+            ),
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.right,
+          ),
+        ),
+        new Expanded(
+            child: new ListView.builder(
+          shrinkWrap: true,
+          padding: EdgeInsets.all(16),
+          itemBuilder: _buildRow,
+          itemCount: groups.length * 2,
+        ))
+      ],
+    );
+  }
+
+  void _showDialog() {
+    // flutter defined function
+    showDialog(
+      context: _scaffoldKey.currentContext,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Alert Dialog title"),
+          content: new Text("Alert Dialog body"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Meקונה',
@@ -49,14 +83,21 @@ class ListsPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      // body:   ListTile(
-      //   title: Text(
-      //     this._name
-      //   ),
-
-      // ),
-      body: Center(
-        child: _buildOptions(),
+      body: _buildOptions(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: Container(
+        height: 80.0,
+        width: 80.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            onPressed: () {
+              _showDialog();
+            },
+            child: Icon(Icons.add),
+            backgroundColor: Colors.black,
+            tooltip: 'New group',
+          ),
+        ),
       ),
     );
   }
