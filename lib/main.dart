@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Color(0XffF3C33F), //yellow color for appBar
       ),
-      home: OpenPageState(),
+      home: OpenPageState("yosi"),
     );
   }
 }

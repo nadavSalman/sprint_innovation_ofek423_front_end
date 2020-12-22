@@ -15,10 +15,10 @@ class OpenPageState extends StatelessWidget {
     "גף תהליכי פיתוח",
   ];
   var _userObject = '';
-  var _lists = '';
+  var _lists;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  OpenPageState(this.groups, this._userObject, this._lists);
+  //add groups parameter to constructor
+  OpenPageState(this._userObject);
 
   Widget _buildRow(BuildContext context, int index) {
     //logic code
