@@ -4,7 +4,7 @@ import 'Lists_page.dart';
 class OpenPageState extends StatelessWidget {
   @override
   // todo: replace the groups list with data from DB
-  final List<String> groups = [
+  List<String> groups = [
     "המגניבים",
     "צוות DevOps",
     "הרוננים",
@@ -14,8 +14,11 @@ class OpenPageState extends StatelessWidget {
     "הרוננים",
     "גף תהליכי פיתוח",
   ];
-  var userName = '';
+  var _userObject = '';
+  var _lists = '';
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  OpenPageState(this.groups, this._userObject, this._lists);
 
   Widget _buildRow(BuildContext context, int index) {
     //logic code
@@ -32,7 +35,7 @@ class OpenPageState extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    ListsPage(groups, this.userName, groups[index ~/ 2])),
+                    ListsPage(groups, this._userObject, groups[index ~/ 2])),
           );
         },
       );

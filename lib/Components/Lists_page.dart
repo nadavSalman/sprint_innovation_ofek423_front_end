@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class ListsPage extends StatelessWidget {
-  final List _lists;
-  var _username;
-  var _currGroup;
+  List _lists;
+  var _userObject;
+  var _currGroupObject;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   List get groups => _lists;
 
-  ListsPage(this._lists, this._username, this._currGroup);
+  ListsPage(this._lists, this._userObject, this._currGroupObject);
 
   Widget _buildRow(BuildContext context, int index) {
     if (index.isEven) {
@@ -28,7 +28,7 @@ class ListsPage extends StatelessWidget {
       children: <Widget>[
         new ListTile(
           title: Text(
-            this._currGroup,
+            this._currGroupObject,
             style: TextStyle(
               fontSize: 30,
             ),
