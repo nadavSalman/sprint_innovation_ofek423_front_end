@@ -4,7 +4,7 @@ name: Flutter CI-CD
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [try_merge_previous_lib]
+    branches: [main]
   # pull_request:
   #   branches: [main]
 
@@ -45,3 +45,11 @@ jobs:
         with:
           name: apk-artifact
           path: "build/app/outputs/flutter-apk/app-release.apk"
+    deploy:
+      steps:
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJson: ${{ JSON_TOKEN }}
+          packageName: "com.ofekDevOps.me_buy"
+          releaseFile: "./build/app/outputs/bundle/release/app-release.aab"
+          track: internal
