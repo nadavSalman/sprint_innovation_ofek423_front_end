@@ -45,8 +45,8 @@ jobs:
         with:
           name: apk-artifact
           path: "build/app/outputs/flutter-apk/app-release.apk"
-    deploy:
-      steps:
+      
+      - name : Deploy to Google Play
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJson: ${{ JSON_TOKEN }}
