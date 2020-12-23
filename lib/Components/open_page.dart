@@ -28,6 +28,9 @@ class OpenPageState extends StatelessWidget {
           groups[index ~/ 2]
               .toUpperCase(), //take the string from groups in index of index/2 in integer
           textDirection: TextDirection.rtl,
+          style: TextStyle(
+            fontSize: 20,
+          ),
         ),
         onTap: () {
           // need to get from the server all the lists for the right username and right group and send to lists page
