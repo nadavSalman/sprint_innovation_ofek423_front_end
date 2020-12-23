@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ProductsListPage extends StatefulWidget {
-  List _products = ["במבה", "ביסלי", "בייגלה"];
+  var _products = ["במבה", "ביסלי", "בייגלה"];
   var _userObject;
   var _currListObject;
   var _currGroupObject;
@@ -16,6 +18,19 @@ class ProductsListPage extends StatefulWidget {
 }
 
 class _ProductsListPageState extends State<ProductsListPage> {
+  @override
+  void initState() {
+    super.initState();
+    // var productsFromdb= []
+    // productsFromdb = getProducts();
+    // setState(() {});
+  }
+
+  void getProducts() async {
+    var result = await http.get("https://me-kone.herokuapp.com/products/");
+    return jsonDecode(result.body);
+  }
+
   Widget _buildRow(BuildContext context, int index) {
     if (index.isEven) {
       return ListTile(
@@ -90,12 +105,18 @@ class _ProductsListPageState extends State<ProductsListPage> {
             // usually buttons at the bottom of the dialog
             new FlatButton(
               child: new Text("Add"),
-              onPressed: () {
+              onPressed: () async {
                 //add post request to the db and add to the local list
                 // widget._products.add(widget.myAddProductModelTextbox.text);
                 var products = widget._products;
                 products.add(widget.myAddProductModelTextbox.text);
                 _addProduct(products);
+                await http.post("https://me-kone.herokuapp.com/items/", body: {
+                  "name": widget.myAddProductModelTextbox.text,
+                  "author": '1',
+                  "list": '1'
+                });
+                print("added to db");
                 Navigator.of(context).pop();
               },
             ),
