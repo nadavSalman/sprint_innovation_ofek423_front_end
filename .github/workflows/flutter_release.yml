@@ -33,7 +33,7 @@ jobs:
           #channel: # optional, default is stable #should be modify wen publish to the web...
       - run: |
           echo "${{ secrets.RELEASE_KEYSTORE }}" > release.jks.asc
-          gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch release.jks.asc > ../../android/app/key.jks
+          gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch release.jks.asc > key.jks
       #install dependecies :
       - run: flutter pub get
 
