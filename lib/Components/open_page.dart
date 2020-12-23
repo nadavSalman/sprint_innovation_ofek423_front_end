@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'Lists_page.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+// class OpenPage extends StatefulWidget {
+//   OpenPage();
+
+//   @Override
+
+// }
 
 class OpenPageState extends StatelessWidget {
   @override
@@ -16,7 +26,9 @@ class OpenPageState extends StatelessWidget {
   ];
   var _userObject = '';
   var _lists;
+  var users;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  var newGroupUsers;
   //add groups parameter to constructor
   OpenPageState(this._userObject);
 
@@ -52,6 +64,34 @@ class OpenPageState extends StatelessWidget {
     );
   }
 
+  Widget setupAlertDialoadContainer() {
+    return Container(
+      height: 300.0, // Change as per your requirement
+      width: 300.0, // Change as per your requirement
+      child: ListView.builder(
+        shrinkWrap: true,
+        itemCount: users.length * 2,
+        itemBuilder: (BuildContext context, int index) {
+          //logic code
+          if (index.isEven) {
+            return ListTile(
+              title: Text(
+                users[index ~/ 2]["userfullname"]
+                    .toUpperCase(), //take the string from groups in index of index/2 in integer
+                textDirection: TextDirection.rtl,
+              ),
+              onTap: () {
+                newGroupUsers.add(users[index ~/ 2]["userfullname"]);
+              },
+            );
+          } else {
+            return Divider();
+          }
+        },
+      ),
+    );
+  }
+
   void _showDialog() {
     // flutter defined function
     showDialog(
@@ -60,7 +100,7 @@ class OpenPageState extends StatelessWidget {
         // return object of type Dialog
         return AlertDialog(
           title: new Text("Alert Dialog title"),
-          content: new Text("Alert Dialog body"),
+          content: setupAlertDialoadContainer(),
           actions: <Widget>[
             // usually buttons at the bottom of the dialog
             new FlatButton(
@@ -95,7 +135,12 @@ class OpenPageState extends StatelessWidget {
         width: 80.0,
         child: FittedBox(
           child: FloatingActionButton(
-            onPressed: () {
+            onPressed: () async {
+              var result =
+                  await http.get("https://me-kone.herokuapp.com/users");
+              users = jsonDecode(result.body);
+              print(users);
+
               _showDialog();
             },
             child: Icon(Icons.add),
