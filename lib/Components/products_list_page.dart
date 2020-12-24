@@ -123,9 +123,9 @@ class _ProductsListPageState extends State<ProductsListPage> {
                 // widget._products.add(widget.myAddProductModelTextbox.text);
                 var products = widget._products;
                 products.add({
-                  "name": widget.myAddProductModelTextbox.text,
-                  "author": '1',
-                  "list": '1'
+                  "productname": widget.myAddProductModelTextbox.text,
+                  "productauthor": '1',
+                  "listid": '1'
                 });
                 _addProduct(products);
                 try {
