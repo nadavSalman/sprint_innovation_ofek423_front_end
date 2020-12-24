@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:http/io_client.dart';
 
+// ignore: must_be_immutable
 class NewGroupModel extends StatefulWidget {
   List newGroupUsers = [];
   List users = [];
@@ -139,21 +140,19 @@ class _NewGroupModelState extends State<NewGroupModel> {
               try {
                 var usersIdForDB = [];
                 widget.newGroupUsers.forEach((user) {
-                  usersIdForDB.add("'" + user["userid"] + "'");
+                  usersIdForDB.add(user["userid"].toString());
                 });
-                var jsonString = jsonEncode({
-                  "name": widget.newGroupNameInput.text,
-                  "users": usersIdForDB
-                });
+                String stringToDB = usersIdForDB.toString();
+                var reqBody =  {
+                      "name": widget.newGroupNameInput.text,
+                      "team_members": stringToDB
+                    };
                 final ioc = new HttpClient();
                 ioc.badCertificateCallback =
                     (X509Certificate cert, String host, int port) => true;
                 final http = new IOClient(ioc);
                 await http.post("https://me-kone.herokuapp.com/groups/group",
-                    body: {
-                      "name": widget.newGroupNameInput.text,
-                      "users": usersIdForDB
-                    }).then((res) {
+                    body:reqBody).then((res) {
                   print("Reponse status : ${res.statusCode}");
                   print("Response body : ${res.body}");
                 });
