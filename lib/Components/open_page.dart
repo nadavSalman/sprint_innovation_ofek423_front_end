@@ -13,6 +13,14 @@ class OpenPageState extends StatelessWidget {
     "צוות DevOps",
     "הרוננים",
     "גף תהליכי פיתוח",
+    "המגניבים",
+    "צוות DevOps",
+    "הרוננים",
+    "גף תהליכי פיתוח",
+    "המגניבים",
+    "צוות DevOps",
+    "הרוננים",
+    "גף תהליכי פיתוח",
   ];
   var _userObject = '';
   var _lists;

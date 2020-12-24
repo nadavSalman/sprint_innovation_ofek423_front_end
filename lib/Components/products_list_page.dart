@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'dart:convert';
 
 class ProductsListPage extends StatefulWidget {
-  var _products = ["במבה", "ביסלי", "בייגלה"];
+  var _products = [];
   var _userObject;
   var _currListObject;
   var _currGroupObject;
@@ -21,21 +22,28 @@ class _ProductsListPageState extends State<ProductsListPage> {
   @override
   void initState() {
     super.initState();
-    // var productsFromdb= []
-    // productsFromdb = getProducts();
-    // setState(() {});
+    getProducts();
   }
 
-  void getProducts() async {
-    var result = await http.get("https://me-kone.herokuapp.com/products/");
-    return jsonDecode(result.body);
+  getProducts() async {
+    try {
+      await Dio().get("https://me-kone.herokuapp.com/items/1").then((res) {
+        print(res.data);
+        setState(() {
+          widget._products = res.data;
+        });
+      });
+    } catch (e) {
+      print('Error');
+      print(e);
+    }
   }
 
   Widget _buildRow(BuildContext context, int index) {
     if (index.isEven) {
       return ListTile(
         title: Text(
-          widget._products[index ~/ 2].toUpperCase(),
+          widget._products[index ~/ 2]["productname"],
           textDirection: TextDirection.rtl,
           style: TextStyle(
             fontSize: 20,
@@ -48,35 +56,40 @@ class _ProductsListPageState extends State<ProductsListPage> {
   }
 
   Widget _buildOptions() {
-    return ListView(
-      children: <Widget>[
-        new ListTile(
-          title: Text(
-            widget._currListObject,
-            style: TextStyle(
-              fontSize: 30,
-            ),
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-          ),
-          subtitle: Text(
-            " קבוצה:" + widget._currGroupObject,
-            style: TextStyle(
-              fontSize: 20,
-            ),
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-          ),
-        ),
-        new Expanded(
-            child: new ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.all(16),
-          itemBuilder: _buildRow,
-          itemCount: widget._products.length * 2,
-        ))
-      ],
-    );
+    return new Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+            child: Container(
+                height: MediaQuery.of(context).size.height,
+                child: Column(
+                  children: <Widget>[
+                    new ListTile(
+                      title: Text(
+                        widget._currListObject,
+                        style: TextStyle(
+                          fontSize: 30,
+                        ),
+                        textDirection: TextDirection.rtl,
+                        textAlign: TextAlign.right,
+                      ),
+                      subtitle: Text(
+                        " קבוצה:" + widget._currGroupObject,
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                        textDirection: TextDirection.rtl,
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                    new Expanded(
+                        child: new ListView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.all(16),
+                      itemBuilder: _buildRow,
+                      itemCount: widget._products.length * 2,
+                    ))
+                  ],
+                ))));
   }
 
   void _addProduct(productslist) {
@@ -109,13 +122,22 @@ class _ProductsListPageState extends State<ProductsListPage> {
                 //add post request to the db and add to the local list
                 // widget._products.add(widget.myAddProductModelTextbox.text);
                 var products = widget._products;
-                products.add(widget.myAddProductModelTextbox.text);
-                _addProduct(products);
-                await http.post("https://me-kone.herokuapp.com/items/", body: {
+                products.add({
                   "name": widget.myAddProductModelTextbox.text,
                   "author": '1',
                   "list": '1'
                 });
+                _addProduct(products);
+                try {
+                  await http.post("https://me-kone.herokuapp.com/items/",
+                      body: {
+                        "name": widget.myAddProductModelTextbox.text,
+                        "author": '1',
+                        "list": '1'
+                      });
+                } catch (e) {
+                  print(e);
+                }
                 print("added to db");
                 Navigator.of(context).pop();
               },
