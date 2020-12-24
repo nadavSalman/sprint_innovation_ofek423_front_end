@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:startup_namer/Components/open_page.dart';
 import 'package:startup_namer/Components/signin.dart';
+import 'package:startup_namer/model/User.dart';
 
 
 
 class SignUp extends StatelessWidget {
-  String _data;
 
-  SignUp(this._data);
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +99,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   //navigation :
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SignIn("Sign-In")),
+                    MaterialPageRoute(builder: (context) => SignIn()),
                   );
                 },
 
@@ -116,6 +116,37 @@ class _SignUpFormState extends State<SignUpForm> {
                   }),
                 ),
                 onPressed:() async{
+                    //1. Sen POST request to register the user
+                      //1.1 In case of registration secsses get the user data and forwar to openPage route.
+
+                    //2.heandle already exsist user .
+                  Response response;
+                  try{
+                      response = await Dio().post("https://me-kone.herokuapp.com/users/user",
+                      data: {"name": _userNameTextController.text, "phone": _userPhoneTextController.text});
+                      //print('api res / add new user  -> ${response}');
+                      // retriving the new user id :
+                      Response responseUser = await Dio().get("https://me-kone.herokuapp.com/users/${_userPhoneTextController.text}");
+                      User signinUser = User(responseUser.data["username"], _userPhoneTextController.text, responseUser.data["id"]);
+
+                      print(signinUser.toString());
+
+
+                      Scaffold.of(context).showSnackBar(SnackBar(
+                        content: Text("added user "),
+                      ));
+
+                    //navigate to open page :
+                    //with recive data : User added
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => OpenPage(signinUser.toJson())),
+                      );
+
+                  }catch(e){
+                    print('api error res -> ${response}');
+                  }
+
 
                 },
                 child: Text('Sign up',

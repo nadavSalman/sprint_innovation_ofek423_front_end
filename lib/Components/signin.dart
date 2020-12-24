@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:startup_namer/Components/signup.dart';
+import 'package:startup_namer/logic/loginUtil.dart';
+import 'package:startup_namer/model/User.dart';
+import 'package:startup_namer/Components/open_page.dart';
 
 
 class SignIn extends StatelessWidget {
-  String _data;
-
-  SignIn(this._data);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -88,26 +87,49 @@ class _SignUpFormState extends State<SignUpForm> {
                 ),
                 onPressed:() async{
 
-                  try {
-                    Response response = await Dio().get("https://me-kone.herokuapp.com/users/${_userPhoneTextController.text}");
-                    print(response);
-                    print(response.data.toString());
-                    if(response.data.toString() == "user does not exist"){
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("user does not exist"),
-                      ));
-                      //register the new user and navigate to open page :
-                    }else{
 
-                      //navigate to open page :
+                  if(checkUserPhoneInput(_userPhoneTextController.text)){
+                    try {
+                      Response response = await Dio().get("https://me-kone.herokuapp.com/users/${_userPhoneTextController.text}");
+                      print('api res -> ${response}');
+                      // //print(response.data.toString());
+                      // print(response.data["username"]);
+
+
+                      if(response.data.toString() == "user does not exist"){
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("user does not exist"),
+                        ));
+                        //register the new user and navigate to open page :
+                      }else{
+
+                        //navigate to open page :
+                        //with recive data : {"username":"Nadav Salman","id":4}
+                        User signinUser = User(response.data["username"], _userPhoneTextController.text, response.data["id"]);
+                        print(signinUser.toString());
+
+                        Scaffold.of(context).showSnackBar(SnackBar(
+                          content: Text("Log in..."),
+                        ));
+
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => OpenPage(signinUser.toJson())),
+                        );
+
+                      }
+                      //print('sucsess');
+
+                    } catch (e) {
+                      print('Error');
+                      print(e);
                     }
-                    //print('sucsess');
+
+                  }else{
                     Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("user exist."),
+                      content: Text("Invalid input"),
                     ));
-                  } catch (e) {
-                    print('Error');
-                    print(e);
                   }
 
 
@@ -135,15 +157,13 @@ class _SignUpFormState extends State<SignUpForm> {
                   //navigation :
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => SignUp("Sign-Up")),
+                    MaterialPageRoute(builder: (context) => SignUp()),
                   );
                 },
                 child: Text('Sign up'),
               ),
             ],
           )
-
-
         ],
       ),
     );
@@ -152,11 +172,6 @@ class _SignUpFormState extends State<SignUpForm> {
 
 
 
-bool checkUserPhoneInput(userPhoneFild){
-  if (userPhoneFild == null) {
-    return false;
-  }
-  return double.tryParse(userPhoneFild) != null;
-}
+
 
 

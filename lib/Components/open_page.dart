@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'Lists_page.dart';
 
 class OpenPage extends StatefulWidget {
+  Map<String, dynamic> _user;
+
+  OpenPage(this._user);
+
   @override
   _OpenPageState createState() => _OpenPageState();
 }
