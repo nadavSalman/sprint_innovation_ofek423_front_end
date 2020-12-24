@@ -15,6 +15,14 @@ class OpenPage extends StatefulWidget {
     "צוות DevOps",
     "הרוננים",
     "גף תהליכי פיתוח",
+    "המגניבים",
+    "צוות DevOps",
+    "הרוננים",
+    "גף תהליכי פיתוח",
+    "המגניבים",
+    "צוות DevOps",
+    "הרוננים",
+    "גף תהליכי פיתוח",
   ];
   var _lists = [];
   List users = [];
@@ -39,6 +47,9 @@ class _OpenPageState extends State<OpenPage> {
           widget.groups[index ~/ 2]
               .toUpperCase(), //take the string from groups in index of index/2 in integer
           textDirection: TextDirection.rtl,
+          style: TextStyle(
+            fontSize: 20,
+          ),
         ),
         onTap: () {
           print("title : ");

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'products_list_page.dart';
 
 class ListsPage extends StatelessWidget {
   List _lists;
@@ -6,45 +7,60 @@ class ListsPage extends StatelessWidget {
   var _currGroupObject;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  List get groups => _lists;
-
   ListsPage(this._lists, this._userObject, this._currGroupObject);
 
   Widget _buildRow(BuildContext context, int index) {
     if (index.isEven) {
       return ListTile(
         title: Text(
-          groups[index ~/ 2].toUpperCase(),
+          _lists[index ~/ 2].toUpperCase(),
           textDirection: TextDirection.rtl,
+          style: TextStyle(
+            fontSize: 20,
+          ),
         ),
+        onTap: () {
+          // need to get from the server all the lists for the right username and right group and send to lists page
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProductsListPage(
+                    _lists[index ~/ 2], this._userObject, _currGroupObject)),
+          );
+        },
       );
     } else {
       return Divider();
     }
   }
 
-  Widget _buildOptions() {
-    return ListView(
-      children: <Widget>[
-        new ListTile(
-          title: Text(
-            this._currGroupObject,
-            style: TextStyle(
-              fontSize: 30,
+  Widget _buildOptions(dynamic context) {
+    return new Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+            child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Column(children: <Widget>[
+            new ListTile(
+              title: Text(
+                this._currGroupObject,
+                style: TextStyle(
+                  fontSize: 30,
+                ),
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.right,
+              ),
             ),
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-          ),
-        ),
-        new Expanded(
-            child: new ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.all(16),
-          itemBuilder: _buildRow,
-          itemCount: groups.length * 2,
-        ))
-      ],
-    );
+            Container(
+                height: MediaQuery.of(context).size.height,
+                child: new ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(16),
+                  itemBuilder: _buildRow,
+                  itemCount: _lists.length * 2,
+                ))
+          ]),
+        )));
   }
 
   void _showDialog() {
@@ -83,7 +99,7 @@ class ListsPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: _buildOptions(),
+      body: _buildOptions(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: Container(
         height: 80.0,
@@ -95,7 +111,7 @@ class ListsPage extends StatelessWidget {
             },
             child: Icon(Icons.add),
             backgroundColor: Colors.black,
-            tooltip: 'New group',
+            tooltip: 'New List',
           ),
         ),
       ),
