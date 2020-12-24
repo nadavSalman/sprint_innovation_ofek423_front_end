@@ -16,12 +16,12 @@ class OpenPage extends StatefulWidget {
     "הרוננים",
     "גף תהליכי פיתוח",
   ];
-  var _userObject = '';
   var _lists = [];
   List users = [];
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
+  Map<String, dynamic> _user;
 
-  OpenPage(this._userObject);
+  OpenPage(this._user);
 
   @override
   _OpenPageState createState() => _OpenPageState();
@@ -41,12 +41,13 @@ class _OpenPageState extends State<OpenPage> {
           textDirection: TextDirection.rtl,
         ),
         onTap: () {
+          print("title : ");
           // need to get from the server all the lists for the right username and right group and send to lists page
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ListsPage(widget.groups,
-                    widget._userObject, widget.groups[index ~/ 2])),
+                    widget._user, widget.groups[index ~/ 2])),
           );
         },
       );
