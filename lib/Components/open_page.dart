@@ -33,6 +33,7 @@ class _OpenPageState extends State<OpenPage> {
               .toUpperCase(), //take the string from groups in index of index/2 in integer
         ),
         onTap: () {
+          print("title : ");
           // need to get from the server all the lists for the right username and right group and send to lists page
           Navigator.push(
             context,

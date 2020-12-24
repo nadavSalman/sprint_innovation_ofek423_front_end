@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:startup_namer/Components/signup.dart';
+import 'package:startup_namer/Components/signin.dart';
 
 
-class SignIn extends StatelessWidget {
+
+class SignUp extends StatelessWidget {
   String _data;
 
-  SignIn(this._data);
+  SignUp(this._data);
 
   @override
   Widget build(BuildContext context) {
+
+
     return MaterialApp(
       routes: {
-        '/': (context) => SignInScreen(),
+        '/': (context) => SignUpScreen(),
       },
     );
   }
@@ -21,7 +24,7 @@ class SignIn extends StatelessWidget {
 }
 
 
-class SignInScreen extends StatelessWidget {
+class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,11 +59,20 @@ class _SignUpFormState extends State<SignUpForm> {
         mainAxisSize: MainAxisSize.min,
         children: [
           LinearProgressIndicator(value: _formProgress),
-          Text('Sign In', style: Theme
+          Text('Sign Up', style: Theme
               .of(context)
               .textTheme
               .headline4),
 
+          Padding(
+
+            padding: EdgeInsets.all(8.0),
+            child: TextFormField(
+              textAlign: TextAlign.end,
+              controller: _userNameTextController,
+              decoration: InputDecoration(hintText: 'שם מלא '),
+            ),
+          ),
           Padding(
             padding: EdgeInsets.all(8.0),
             child: TextFormField(
@@ -70,9 +82,6 @@ class _SignUpFormState extends State<SignUpForm> {
               decoration: InputDecoration(hintText: 'מספר טלפון'),
             ),
           ),
-
-
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center ,//Center Column contents vertically,
             crossAxisAlignment: CrossAxisAlignment.center, //Center Column contents horizontally,
@@ -87,37 +96,15 @@ class _SignUpFormState extends State<SignUpForm> {
                   }),
                 ),
                 onPressed:() async{
-
-                  try {
-                    Response response = await Dio().get("https://me-kone.herokuapp.com/users/${_userPhoneTextController.text}");
-                    print(response);
-                    print(response.data.toString());
-                    if(response.data.toString() == "user does not exist"){
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text("user does not exist"),
-                      ));
-                      //register the new user and navigate to open page :
-                    }else{
-
-                      //navigate to open page :
-                    }
-                    //print('sucsess');
-                    Scaffold.of(context).showSnackBar(SnackBar(
-                      content: Text("user exist."),
-                    ));
-                  } catch (e) {
-                    print('Error');
-                    print(e);
-                  }
-
-
+                  //navigation :
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignIn("Sign-In")),
+                  );
                 },
 
 
-                child: Text('Sign in',
-                  style: TextStyle(fontWeight: FontWeight.bold,
-                    decoration: TextDecoration.underline,),),
-
+                child: Text('Sign in'),
               ),
               TextButton(
                 style: ButtonStyle(
@@ -129,34 +116,16 @@ class _SignUpFormState extends State<SignUpForm> {
                   }),
                 ),
                 onPressed:() async{
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                    content: Text("go to registration page ..."),
-                  ));
-                  //navigation :
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => SignUp("Sign-Up")),
-                  );
+
                 },
-                child: Text('Sign up'),
+                child: Text('Sign up',
+                  style: TextStyle(fontWeight: FontWeight.bold,
+                    decoration: TextDecoration.underline,),),
               ),
             ],
           )
-
-
         ],
       ),
     );
   }
 }
-
-
-
-bool checkUserPhoneInput(userPhoneFild){
-  if (userPhoneFild == null) {
-    return false;
-  }
-  return double.tryParse(userPhoneFild) != null;
-}
-
-
