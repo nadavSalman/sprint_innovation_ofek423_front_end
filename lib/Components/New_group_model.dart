@@ -140,19 +140,21 @@ class _NewGroupModelState extends State<NewGroupModel> {
               try {
                 var usersIdForDB = [];
                 widget.newGroupUsers.forEach((user) {
-                  usersIdForDB.add(user["userid"].toString());
+                  usersIdForDB.add(user["userid"]);
                 });
-                String stringToDB = usersIdForDB.toString();
+                //String stringToDB = usersIdForDB.toString();
                 var reqBody =  {
                       "name": widget.newGroupNameInput.text,
-                      "team_members": stringToDB
+                      "team_members": usersIdForDB
                     };
+                var jsonBody = jsonEncode(reqBody);
+                print(jsonBody);
                 final ioc = new HttpClient();
                 ioc.badCertificateCallback =
                     (X509Certificate cert, String host, int port) => true;
                 final http = new IOClient(ioc);
                 await http.post("https://me-kone.herokuapp.com/groups/group",
-                    body:reqBody).then((res) {
+                    body:jsonBody , headers: { "accept": "application/json", "content-type": "application/json" }).then((res) {
                   print("Reponse status : ${res.statusCode}");
                   print("Response body : ${res.body}");
                 });
