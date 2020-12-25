@@ -34,28 +34,33 @@ class ListsPage extends StatelessWidget {
     }
   }
 
-  Widget _buildOptions() {
-    return ListView(
-      children: <Widget>[
-        new ListTile(
-          title: Text(
-            this._currGroupObject,
-            style: TextStyle(
-              fontSize: 30,
+  Widget _buildOptions(dynamic context) {
+    return new Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: SingleChildScrollView(
+            child: Container(
+          height: MediaQuery.of(context).size.height,
+          child: Column(children: <Widget>[
+            new ListTile(
+              title: Text(
+                this._currGroupObject,
+                style: TextStyle(
+                  fontSize: 30,
+                ),
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.right,
+              ),
             ),
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-          ),
-        ),
-        new Expanded(
-            child: new ListView.builder(
-          shrinkWrap: true,
-          padding: EdgeInsets.all(16),
-          itemBuilder: _buildRow,
-          itemCount: _lists.length * 2,
-        ))
-      ],
-    );
+            Container(
+                height: MediaQuery.of(context).size.height,
+                child: new ListView.builder(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(16),
+                  itemBuilder: _buildRow,
+                  itemCount: _lists.length * 2,
+                ))
+          ]),
+        )));
   }
 
   void _showDialog() {
@@ -94,7 +99,7 @@ class ListsPage extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: _buildOptions(),
+      body: _buildOptions(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: Container(
         height: 80.0,

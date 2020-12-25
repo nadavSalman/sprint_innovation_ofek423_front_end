@@ -1,4 +1,4 @@
-package com.example.me_buy
+package com.ofekDevOps.me_buy
 
 import io.flutter.embedding.android.FlutterActivity
 
