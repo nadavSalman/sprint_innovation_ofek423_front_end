@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'Lists_page.dart';
@@ -6,25 +7,8 @@ import 'dart:convert';
 import 'New_group_model.dart';
 
 class OpenPage extends StatefulWidget {
-  List<String> groups = [
-    "המגניבים",
-    "צוות DevOps",
-    "הרוננים",
-    "גף תהליכי פיתוח",
-    "המגניבים",
-    "צוות DevOps",
-    "הרוננים",
-    "גף תהליכי פיתוח",
-    "המגניבים",
-    "צוות DevOps",
-    "הרוננים",
-    "גף תהליכי פיתוח",
-    "המגניבים",
-    "צוות DevOps",
-    "הרוננים",
-    "גף תהליכי פיתוח",
-  ];
-  var _lists = [];
+  var _groups = [];
+  var _listsOfPressedGroup=[];
   List users = [];
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   Map<String, dynamic> _user;
@@ -36,29 +20,70 @@ class OpenPage extends StatefulWidget {
 }
 
 class _OpenPageState extends State<OpenPage> {
-  @override
-  // todo: replace the groups list with data from DB
+  
+  void initState() {
+    super.initState();
+    getGroups();
+  }
 
+  getGroups() async {
+    print("the user connected:");
+    print(widget._user);
+    try {
+      String reqBody = "https://me-kone.herokuapp.com/groups/"+widget._user["id"].toString();
+      print(reqBody);
+      await Dio().get(reqBody).then((res) {
+        print(res.data);
+        setState(() {
+          widget._groups = res.data;
+        });
+      });
+    } catch (e) {
+      print('Error');
+      print(e);
+    }
+  }
+ 
   Widget _buildRow(BuildContext context, int index) {
     //logic code
     if (index.isEven) {
       return ListTile(
         title: Text(
-          widget.groups[index ~/ 2]
-              .toUpperCase(), //take the string from groups in index of index/2 in integer
+          widget._groups[index ~/ 2]["teamname"]
+              .toUpperCase(),
           textDirection: TextDirection.rtl,
           style: TextStyle(
             fontSize: 20,
           ),
         ),
-        onTap: () {
-          print("title : ");
-          // need to get from the server all the lists for the right username and right group and send to lists page
+        onTap: () async{
+          print("title : " + widget._groups[index ~/ 2]["teamname"]);
+          try {
+            String reqBody = "https://me-kone.herokuapp.com/lists/"+widget._groups[index ~/ 2]["teamid"].toString();
+            print(reqBody);
+            await Dio().get(reqBody).then((res) {
+              print(res.data);
+              setState(() {
+                widget._listsOfPressedGroup = res.data;
+              });
+            });
+          } catch (e) {
+            print('Error');
+            print(e);
+          }
+          try {
+            var result =
+                  await http.get("https://me-kone.herokuapp.com/users");
+                   widget.users = jsonDecode(result.body);
+              print(widget.users);
+          } catch (e) {
+            print('Error');
+            print(e);
+          }
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ListsPage(widget.groups,
-                    widget._user, widget.groups[index ~/ 2])),
+                builder: (context) => ListsPage(widget._listsOfPressedGroup, widget._user, widget._groups[index ~/ 2], widget.users)),
           );
         },
       );
@@ -71,7 +96,7 @@ class _OpenPageState extends State<OpenPage> {
     return ListView.builder(
       padding: EdgeInsets.all(16),
       itemBuilder: _buildRow,
-      itemCount: widget.groups.length * 2,
+      itemCount: widget._groups.length * 2,
     );
   }
 

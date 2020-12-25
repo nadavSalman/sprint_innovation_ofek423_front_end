@@ -3,17 +3,20 @@ import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import 'Products_List.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart' as intl;
 
 class ProductsListPage extends StatefulWidget {
   var _products = [];
   var _userObject;
   var _currListObject;
   var _currGroupObject;
+  var _listName;
+  var _allUsers;
   var myAddProductModelTextbox = TextEditingController();
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   ProductsListPage(
-      this._currListObject, this._userObject, this._currGroupObject);
+      this._currListObject, this._userObject, this._currGroupObject, this._listName, this._allUsers);
 
   @override
   _ProductsListPageState createState() => _ProductsListPageState();
@@ -28,7 +31,8 @@ class _ProductsListPageState extends State<ProductsListPage> {
 
   getProducts() async {
     try {
-      await Dio().get("https://me-kone.herokuapp.com/items/1").then((res) {
+      print(widget._currListObject["listid"].toString());
+      await Dio().get("https://me-kone.herokuapp.com/items/" + widget._currListObject["listid"].toString()).then((res) {
         print(res.data);
         setState(() {
           widget._products = res.data;
@@ -40,11 +44,17 @@ class _ProductsListPageState extends State<ProductsListPage> {
     }
   }
 
+  getItemName(int index) {
+    
+    var authorName =  widget._allUsers.firstWhere((obj) => obj["userid"] ==  widget._products[index ~/ 2]["productauthor"]);
+    return widget._products[index ~/ 2]["productname"]+ " ל-" + authorName["userfullname"];
+  }
+
   Widget _buildRow(BuildContext context, int index) {
     if (index.isEven) {
       return ListTile(
         title: Text(
-          widget._products[index ~/ 2]["productname"],
+          getItemName(index),
           textDirection: TextDirection.rtl,
           style: TextStyle(
             fontSize: 20,
@@ -66,7 +76,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
                   children: <Widget>[
                     new ListTile(
                       title: Text(
-                        widget._currListObject,
+                        widget._listName,
                         style: TextStyle(
                           fontSize: 30,
                         ),
@@ -74,7 +84,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
                         textAlign: TextAlign.right,
                       ),
                       subtitle: Text(
-                        " קבוצה:" + widget._currGroupObject,
+                        intl.DateFormat('dd-MM-yyyy – hh:mm').format(DateTime.parse(widget._currListObject["listpurchasedate"]))+ " קבוצה:" + widget._currGroupObject["teamname"],
                         style: TextStyle(
                           fontSize: 20,
                         ),
@@ -82,7 +92,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
                         textAlign: TextAlign.right,
                       ),
                     ),
-                    new Expanded(child: ProductList(widget._products))
+                    new Expanded(child: ProductList(widget._products, widget._allUsers))
                   ],
                 ))));
   }
@@ -119,8 +129,8 @@ class _ProductsListPageState extends State<ProductsListPage> {
                 var products = widget._products;
                 products.add({
                   "productname": widget.myAddProductModelTextbox.text,
-                  "productauthor": '1',
-                  "listid": '1'
+                  "productauthor": widget._userObject["userid"],
+                  "listid": widget._currListObject["listid"]
                 });
                 _addProduct(products);
                 try {

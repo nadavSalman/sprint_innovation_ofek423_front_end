@@ -13,6 +13,9 @@ class SignIn extends StatelessWidget {
       routes: {
         '/': (context) => SignInScreen(),
       },
+      theme: ThemeData(
+        primaryColor: Color(0XffF3C33F), //yellow color for appBar
+      ),
     );
   }
 
@@ -24,7 +27,7 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.yellow[200],
       body: Center(
         child: SizedBox(
           width: 400,

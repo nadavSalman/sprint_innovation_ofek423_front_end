@@ -14,10 +14,11 @@ class _FloatingPlusButtonState extends State<FloatingPlusButton> {
           width: 80.0,
           child: FittedBox(
             child: FloatingActionButton(
-              // onPressed: (){Navigator.push(
+               onPressed: (){
+                 //Navigator.push(
               //   context,
-              //   MaterialPageRoute(builder: (context) => SignUp("ew")),
-              // );},
+              //   MaterialPageRoute(builder: (context) => SignUp("ew")),);
+              },
               child: Icon(Icons.add),
               backgroundColor: Colors.black,
               tooltip: 'New group',
