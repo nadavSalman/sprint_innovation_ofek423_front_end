@@ -1,0 +1,4 @@
+lane :alpha do
+  gradle(task: 'assemble', build_type: 'Release')
+  upload_to_play_store(track: 'alpha', aab: "../build/app/outputs/bundle/release/app-release.aab")
+end

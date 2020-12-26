@@ -1,10 +1,9 @@
 name: Flutter CI-CD
 
-# Controls when the action will run.
+# trigger condition for the action
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [Pages]
+    branches: [GogglePlay]
   # pull_request:
   #   branches: [main]
 
@@ -17,10 +16,16 @@ jobs:
   Build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
+      - name: Create Google Play Config file
+        run: |
+          cd android
+          echo "$GOOGLE_API_JSON" > google_api.json.b64
+          base64 -d -i google_api.json.b64 > google_api.json
+        env:
+          GOOGLE_API_JSON: ${{ secrets.GOOGLE_API_JSON }}
       - uses: actions/setup-java@v1
         with:
           java-version: "12.x"
@@ -30,28 +35,47 @@ jobs:
           # The Flutter version to make available on the path
           flutter-version: "1.22.4" # optional
           # The Flutter build release channel
-          #channel: # optional, default is stable #should be modify wen publish to the web...
-      - run: |
-          echo "${{ secrets.RELEASE_KEYSTORE }}" > release.jks.asc
-          gpg -d --passphrase "${{ secrets.RELEASE_KEYSTORE_PASSPHRASE }}" --batch release.jks.asc > key.jks
+          #channel: # optional, default is stable #should be modified when deploying a web version
       #install dependecies :
-      - run: flutter pub get
+      - name: Configure Keystore
+        run: |
+          pwd
+          echo "$ANDROID_KEYSTORE_FILE" > upload_key.jks.b64
+          base64 -d -i upload_key.jks.b64 > ./android/app/upload_key.jks
+          echo "storeFile=upload_key.jks" >> ./android/key.properties
+          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> ./android/key.properties
+          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> ./android/key.properties
+          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> ./android/key.properties
+          pwd
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
 
+      - run: flutter pub get
       #run tests :
       - run: flutter test
-
-      - run: flutter build apk
+      - run: flutter build appbundle
 
       - name: Push APK to Releases - save artifact
         uses: actions/upload-artifact@v2
         with:
-          name: apk-artifact
-          path: "build/app/outputs/flutter-apk/app-release.apk"
-      
-   #   - name : Deploy to Google Play
-   #     uses: r0adkll/upload-google-play@v1
-    #    with:
-    #      serviceAccountJson: ${{ secrets.JSON_TOKEN }}
-    #      packageName: "com.ofekDevOps.me_buy"
-    #      releaseFile: "./build/app/outputs/bundle/release/app-release.aab"
-    #      track: internal
+          name: aab-artifact
+          path: "./build/app/outputs/bundle/release/app-release.aab"
+
+      - uses: actions/setup-ruby@v1
+        with:
+          ruby-version: "2.7"
+
+      - name: Install bundle
+        run: |
+          pwd
+          ls -R
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+
+      - name: Distribute app to Alpha track 🚀
+        run: |
+          cd ./android
+          bundle exec fastlane alpha
