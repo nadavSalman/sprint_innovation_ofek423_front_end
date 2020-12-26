@@ -8,7 +8,7 @@ import 'New_group_model.dart';
 
 class OpenPage extends StatefulWidget {
   var _groups = [];
-  var _listsOfPressedGroup=[];
+  var _listsOfPressedGroup = [];
   List users = [];
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
   Map<String, dynamic> _user;
@@ -20,13 +20,12 @@ class OpenPage extends StatefulWidget {
 }
 
 class _OpenPageState extends State<OpenPage> {
-  
   void initState() {
     super.initState();
     getGroups();
   }
 
-  updateGroups(newGroups){
+  updateGroups(newGroups) {
     setState(() {
       widget._groups = newGroups;
     });
@@ -36,7 +35,8 @@ class _OpenPageState extends State<OpenPage> {
     print("the user connected:");
     print(widget._user);
     try {
-      String reqBody = "https://me-kone.herokuapp.com/groups/"+widget._user["id"].toString();
+      String reqBody = "https://me-kone.herokuapp.com/groups/" +
+          widget._user["id"].toString();
       print(reqBody);
       await Dio().get(reqBody).then((res) {
         print(res.data);
@@ -49,23 +49,23 @@ class _OpenPageState extends State<OpenPage> {
       print(e);
     }
   }
- 
+
   Widget _buildRow(BuildContext context, int index) {
     //logic code
     if (index.isEven) {
       return ListTile(
         title: Text(
-          widget._groups[index ~/ 2]["teamname"]
-              .toUpperCase(),
+          widget._groups[index ~/ 2]["teamname"].toUpperCase(),
           textDirection: TextDirection.rtl,
           style: TextStyle(
             fontSize: 20,
           ),
         ),
-        onTap: () async{
+        onTap: () async {
           print("title : " + widget._groups[index ~/ 2]["teamname"]);
           try {
-            String reqBody = "https://me-kone.herokuapp.com/lists/"+widget._groups[index ~/ 2]["teamid"].toString();
+            String reqBody = "https://me-kone.herokuapp.com/lists/" +
+                widget._groups[index ~/ 2]["teamid"].toString();
             print(reqBody);
             await Dio().get(reqBody).then((res) {
               print(res.data);
@@ -78,10 +78,9 @@ class _OpenPageState extends State<OpenPage> {
             print(e);
           }
           try {
-            var result =
-                  await http.get("https://me-kone.herokuapp.com/users");
-                   widget.users = jsonDecode(result.body);
-              print(widget.users);
+            var result = await http.get("https://me-kone.herokuapp.com/users");
+            widget.users = jsonDecode(result.body);
+            print(widget.users);
           } catch (e) {
             print('Error');
             print(e);
@@ -89,7 +88,8 @@ class _OpenPageState extends State<OpenPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => ListsPage(widget._listsOfPressedGroup, widget._user, widget._groups[index ~/ 2], widget.users)),
+                builder: (context) => ListsPage(widget._listsOfPressedGroup,
+                    widget._user, widget._groups[index ~/ 2], widget.users)),
           );
         },
       );
@@ -116,7 +116,8 @@ class _OpenPageState extends State<OpenPage> {
           title: new Text("קבוצה חדשה",
               textAlign: TextAlign.right,
               style: TextStyle(decoration: TextDecoration.underline)),
-          content: NewGroupModel(widget.users, widget._groups, widget._user, updateGroups),
+          content: NewGroupModel(
+              widget.users, widget._groups, widget._user, updateGroups),
         );
       },
     );
@@ -127,14 +128,21 @@ class _OpenPageState extends State<OpenPage> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(
-          'Meקונה',
-          style: TextStyle(
-            fontSize: 40,
-          ),
+          title: Row(
+          mainAxisAlignment:
+                MainAxisAlignment.end,
+           children: [
+        Container(padding: const EdgeInsets.all(45), child: Text('Meקונה',
+        style: TextStyle(
+            fontSize: 22,
+          ),)),
+        Image.asset(
+          'Assets/logo.png',
+          fit: BoxFit.contain,
+          height: 60,
         ),
-        centerTitle: true,
-      ),
+        
+      ])),
       body: _buildOptions(),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: Container(

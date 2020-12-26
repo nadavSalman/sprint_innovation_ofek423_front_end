@@ -27,16 +27,24 @@ class SignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.yellow[200],
+      backgroundColor: Colors.yellow[600],
       body: Center(
-        child: SizedBox(
+        child: new Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                new Image.asset(
+              'Assets/logo.png',
+              width: 190.0,
+              height: 120.0,
+            ), SizedBox(
           width: 400,
           child: Card(
             child: SignUpForm(),
           ),
         ),
-      ),
-    );
+              ]),
+    )));
   }
 }
 
@@ -57,8 +65,11 @@ class _SignUpFormState extends State<SignUpForm> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          LinearProgressIndicator(value: _formProgress),
-          Text('Sign In', style: Theme
+                 
+          //LinearProgressIndicator(value: _formProgress),
+          Text('התחבר', 
+          textAlign: TextAlign.center,
+          style: Theme
               .of(context)
               .textTheme
               .headline4),
@@ -76,16 +87,16 @@ class _SignUpFormState extends State<SignUpForm> {
 
 
           Row(
-            mainAxisAlignment: MainAxisAlignment.center ,//Center Column contents vertically,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly ,//Center Column contents vertically,
             crossAxisAlignment: CrossAxisAlignment.center, //Center Column contents horizontally,
             children: <Widget>[
               TextButton(
                 style: ButtonStyle(
                   foregroundColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
-                    return states.contains(MaterialState.disabled) ? null : Colors.black38;
+                    return states.contains(MaterialState.disabled) ? null : Colors.black54;
                   }),
                   backgroundColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
-                    return states.contains(MaterialState.disabled) ? null : Colors.white10;
+                    return states.contains(MaterialState.disabled) ? null : Colors.lightBlue[50];
                   }),
                 ),
                 onPressed:() async{
@@ -139,7 +150,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 },
 
 
-                child: Text('Sign in',
+                child: Text('התחבר',
                   style: TextStyle(fontWeight: FontWeight.bold,
                     decoration: TextDecoration.underline,),),
 
@@ -147,10 +158,10 @@ class _SignUpFormState extends State<SignUpForm> {
               TextButton(
                 style: ButtonStyle(
                   foregroundColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
-                    return states.contains(MaterialState.disabled) ? null : Colors.black38;
+                    return states.contains(MaterialState.disabled) ? null : Colors.black54;
                   }),
                   backgroundColor: MaterialStateColor.resolveWith((Set<MaterialState> states) {
-                    return states.contains(MaterialState.disabled) ? null : Colors.white10;
+                    return states.contains(MaterialState.disabled) ? null : Colors.lightBlue[50];
                   }),
                 ),
                 onPressed:() async{
@@ -163,7 +174,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     MaterialPageRoute(builder: (context) => SignUp()),
                   );
                 },
-                child: Text('Sign up'),
+                child: Text('הירשם'),
               ),
             ],
           )
