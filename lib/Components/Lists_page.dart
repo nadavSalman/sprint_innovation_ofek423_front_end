@@ -125,12 +125,21 @@ class _ListsPageState extends State<ListsPage> {
     return Scaffold(
       key: widget._scaffoldKey,
       appBar: AppBar(
-        title: Text(
-          'Meקונה',
-          style: TextStyle(
-            fontSize: 40,
-          ),
+        title: Row(
+          mainAxisAlignment:
+                MainAxisAlignment.end,
+           children: [
+        Container(padding: const EdgeInsets.all(45), child: Text('Meקונה',
+        style: TextStyle(
+            fontSize: 22,
+          ),)),
+        Image.asset(
+          'Assets/logo.png',
+          fit: BoxFit.contain,
+          height: 60,
         ),
+        
+      ]),
         centerTitle: true,
       ),
       body: _buildOptions(context),
