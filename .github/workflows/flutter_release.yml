@@ -32,9 +32,8 @@ jobs:
       #install dependecies :
       - name: Configure Keystore
         run: |
-          cd ./android
           echo "$ANDROID_KEYSTORE_FILE" > upload_key.jks.b64
-          base64 -d -i upload_key.jks.b64 > app/upload_key.jks
+          base64 -d -i upload_key.jks.b64 > ./android/upload_key.jks
           echo "storeFile=upload_key.jks" >> keystore.properties
           echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> keystore.properties
           echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties
