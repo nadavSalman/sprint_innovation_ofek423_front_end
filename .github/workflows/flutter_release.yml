@@ -57,24 +57,6 @@ jobs:
           name: aab-artifact
           path: "./build/app/outputs/bundle/release/app-release.aab"
 
-  deploy_apk:
-    name: Deploy Android Beta
-    needs: [Build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-java@v1
-        with:
-          java-version: "12.x"
-
-      - uses: subosito/flutter-action@v1
-        with:
-          channel: "dev"
-      - uses: actions/download-artifact@v2
-        with:
-          name: aab-artifact
-          path: ./build/app/outputs/bundle/release/
-
       - name: Create Google Play Config file
         run: |
           echo "$GOOGLE_API_JSON" > google_api.json.b64
