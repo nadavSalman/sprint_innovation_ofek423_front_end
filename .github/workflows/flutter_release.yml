@@ -87,7 +87,7 @@ jobs:
 
       - name: Install bundle
         run: |
-          bundle config ./android/Gemfile
+          bundle config path ./android/Gemfile
           bundle install --jobs 4 --retry 3
 
       - name: Distribute app to Alpha track 🚀
