@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: aab-artifact
-          path: "/build/app/outputs/bundle/release/app-release.aab"
+          path: "./build/app/outputs/bundle/release/app-release.aab"
 
   deploy_apk:
     name: Deploy Android Beta
