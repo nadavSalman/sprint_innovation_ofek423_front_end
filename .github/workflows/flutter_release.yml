@@ -19,6 +19,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v2
+      - name: Create Google Play Config file
+        run: |
+          cd android
+          echo "$GOOGLE_API_JSON" > google_api.json.b64
+          base64 -d -i google_api.json.b64 > google_api.json
+        env:
+          PLAY_CONFIG_JSON: ${{ secrets.GOOGLE_API_JSON }}
       - uses: actions/setup-java@v1
         with:
           java-version: "12.x"
@@ -56,14 +63,6 @@ jobs:
         with:
           name: aab-artifact
           path: "./build/app/outputs/bundle/release/app-release.aab"
-
-      - name: Create Google Play Config file
-        run: |
-          cd android
-          echo "$GOOGLE_API_JSON" > google_api.json.b64
-          base64 -d -i google_api.json.b64 > google_api.json
-        env:
-          PLAY_CONFIG_JSON: ${{ secrets.GOOGLE_API_JSON }}
 
       - uses: actions/setup-ruby@v1
         with:
