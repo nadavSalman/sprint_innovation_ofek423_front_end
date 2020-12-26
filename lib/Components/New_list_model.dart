@@ -1,11 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' as intl;
+import 'dart:convert';
+import 'package:http/io_client.dart';
 
 class NewListModel extends StatefulWidget {
   DateTime selectedDate = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   var myAddListModelTextbox = TextEditingController();
+  var currGroupObject;
+  var currUserObject;
+  final updateLists;
 
+  NewListModel(this.currUserObject, this.currGroupObject, this.updateLists);
   @override
   _NewListModelState createState() => _NewListModelState();
 }
@@ -37,7 +45,9 @@ class _NewListModelState extends State<NewListModel> {
           TextField(
             controller: widget.myAddListModelTextbox,
             textInputAction: TextInputAction.go,
+            textAlign: TextAlign.right,
             decoration: InputDecoration(hintText: "הכנס את שם המקום"),
+
           ),
           Divider(),
           // Directionality(textDirection:, child: ),
@@ -49,17 +59,21 @@ class _NewListModelState extends State<NewListModel> {
               fontSize: 20,
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
           Text(
-            "${widget.selectedDate.toLocal()}".split(' ')[0],
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            "${widget.selectedDate.toLocal()} ".split(' ')[0],
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           SizedBox(
             height: 20.0,
           ),
           Text(
-            widget.selectedTime.format(context),
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          ),
+            " " + widget.selectedTime.format(context),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),]),
           RaisedButton(
             onPressed: () => _selectDateAndTime(context),
             child: Text(
@@ -68,8 +82,60 @@ class _NewListModelState extends State<NewListModel> {
                   TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
             ),
             color: Color(0XffF3C33F),
+          ), 
+            
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [ new FlatButton(
+            child: new Text("Create"),
+            onPressed: () async {
+              try {
+                DateTime newDateToDB = new DateTime(widget.selectedDate.year, widget.selectedDate.month, widget.selectedDate.day, widget.selectedTime.hour, widget.selectedTime.minute);
+                String dateInString = newDateToDB.toIso8601String();
+                var newListToDB;
+                newListToDB = {
+                  "team": widget.currGroupObject["teamid"],
+                  "creator": widget.currUserObject["id"], 
+                  "date": dateInString, 
+                  "location": widget.myAddListModelTextbox.text
+                };
+                var jsonBody = jsonEncode(newListToDB);
+                print(jsonBody);
+                final ioc = new HttpClient();
+                ioc.badCertificateCallback =
+                    (X509Certificate cert, String host, int port) => true;
+                final http = new IOClient(ioc);
+                await http.post("https://me-kone.herokuapp.com/lists/list",
+                    body: jsonBody,
+                    headers: {
+                      "accept": "application/json",
+                      "content-type": "application/json"
+                    }).then((res) {
+                  print("Reponse status : ${res.statusCode}");
+                  print("Response body : ${res.body}");
+                    });
+                    String getReqBody = "https://me-kone.herokuapp.com/lists/" +
+                        widget.currGroupObject["teamid"].toString();
+                    print(getReqBody);
+                    await http.get(getReqBody).then((res) {
+                      print(res.body);
+                      widget.updateLists(jsonDecode(res.body));
+                    });
+              } catch (e) {
+                print(e.toString());
+              }
+              Navigator.of(context).pop();
+            },
           ),
-        ],
+          new FlatButton(
+            child: new Text("Close"),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )]
+          )],
       ),
     );
   }

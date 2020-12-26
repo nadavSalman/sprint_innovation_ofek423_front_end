@@ -17,6 +17,9 @@ class SignUp extends StatelessWidget {
       routes: {
         '/': (context) => SignUpScreen(),
       },
+      theme: ThemeData(
+        primaryColor: Color(0XffF3C33F), //yellow color for appBar
+      ),
     );
   }
 

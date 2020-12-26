@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'Products_List.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart' as intl;
+import 'New_item_model.dart';
 
 class ProductsListPage extends StatefulWidget {
   var _products = [];
@@ -53,6 +54,12 @@ class _ProductsListPageState extends State<ProductsListPage> {
     return widget._products[index ~/ 2]["productname"] +
         " ל-" +
         authorName["userfullname"];
+  }
+
+  updateItems(newItems){
+    setState(() {
+      widget._products = newItems;
+    });
   }
 
   Widget _buildRow(BuildContext context, int index) {
@@ -107,12 +114,6 @@ class _ProductsListPageState extends State<ProductsListPage> {
                 ))));
   }
 
-  void _addProduct(productslist) {
-    setState(() {
-      widget._products = productslist;
-    });
-  }
-
   void _showDialog() {
     // flutter defined function
     showDialog(
@@ -123,49 +124,10 @@ class _ProductsListPageState extends State<ProductsListPage> {
           title: new Text(
             "הוספת מוצר חדש",
             textAlign: TextAlign.right,
+            style: TextStyle(decoration: TextDecoration.underline)
           ),
-          content: TextField(
-            controller: widget.myAddProductModelTextbox,
-            textInputAction: TextInputAction.go,
-            decoration: InputDecoration(hintText: "הכנס את המוצר שאתה רוצה"),
-          ),
-          actions: <Widget>[
-            // usually buttons at the bottom of the dialog
-            new FlatButton(
-              child: new Text("Add"),
-              onPressed: () async {
-                //add post request to the db and add to the local list
-                // widget._products.add(widget.myAddProductModelTextbox.text);
-                var products = widget._products;
-                products.add({
-                  "productname": widget.myAddProductModelTextbox.text,
-                  "productauthor": widget._userObject["userid"],
-                  "listid": widget._currListObject["listid"]
-                });
-                _addProduct(products);
-                try {
-                  await http.post("https://me-kone.herokuapp.com/items/",
-                      body: {
-                        "name": widget.myAddProductModelTextbox.text,
-                        "author": '1',
-                        "list": '1'
-                      });
-                } catch (e) {
-                  print(e);
-                }
-                print("added to db");
-                Navigator.of(context).pop();
-              },
-            ),
-            new FlatButton(
-              child: new Text("Close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+          content: NewItemModel( widget._userObject ,widget._currListObject, updateItems));
+          },
     );
   }
 
