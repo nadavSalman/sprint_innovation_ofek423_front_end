@@ -34,10 +34,10 @@ jobs:
         run: |
           echo "$ANDROID_KEYSTORE_FILE" > upload_key.jks.b64
           base64 -d -i upload_key.jks.b64 > ./android/upload_key.jks
-          echo "storeFile=upload_key.jks" >> keystore.properties
-          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> keystore.properties
-          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties
-          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> keystore.properties
+          echo "storeFile=upload_key.jks" >> key.properties
+          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> key.properties
+          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> key.properties
+          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> key.properties
           pwd
         env:
           ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
