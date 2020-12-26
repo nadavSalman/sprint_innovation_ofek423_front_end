@@ -3,7 +3,7 @@ name: Flutter CI-CD
 # trigger condition for the action
 on:
   push:
-    branches: [Pages]
+    branches: [GogglePlay]
   # pull_request:
   #   branches: [main]
 
@@ -44,23 +44,44 @@ jobs:
           name: apk-artifact
           path: "build/app/outputs/flutter-apk/app-release.apk"
 
+  deploy_apk:
+    name: Deploy Android Beta
+    needs: [Build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-java@v1
+        with:
+          java-version: "12.x"
 
-   deploy_apk:
-     name: Deploy Android Beta
-     needs: [Build]
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v1
-       - uses: actions/setup-java@v1
-         with:
-           java-version: '12.x'
-       - uses: subosito/flutter-action@v1
-         with:
-           channel: 'dev'
-       - uses: maierj/fastlane-action@v0.9.5
-         with:
-           lane: 'beta'
-           subdirectory: 'android'
-         env:
-           GITHUB_API_TOKEN: ${{ secrets.JSON_TOKEN }}
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: "dev"
 
+      - name: Configure Keystore
+        run: |
+          cd ./android
+          echo "$ANDROID_KEYSTORE_FILE" > upload_key.jks.b64
+          base64 -d -i upload_key.jks.b64 > app/upload_key.jks
+          echo "storeFile=upload_key.jks" >> keystore.properties
+          echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> keystore.properties
+          echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> keystore.properties
+          echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> keystore.properties
+          pwd
+        env:
+          ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+          KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+          KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+          KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
+
+      - name: Create Google Play Config file
+        run: |
+          echo "$GOOGLE_API_JSON" > google_api.json.b64
+          base64 -d -i google_api.json.b64 > google_api.json
+        env:
+          PLAY_CONFIG_JSON: ${{ secrets.GOOGLE_API_JSON }}
+
+      - uses: maierj/fastlane-action@v0.9.5
+        with:
+          lane: "alpha"
+          subdirectory: "android"
