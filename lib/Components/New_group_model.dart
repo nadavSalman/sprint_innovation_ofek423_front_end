@@ -11,10 +11,13 @@ class NewGroupModel extends StatefulWidget {
   List newGroupUsers = [];
   List users = [];
   var newGroupNameInput = TextEditingController();
+  var _groups;
+  var _currUser;
+  final updateGroups;
 
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  NewGroupModel(this.users);
+  NewGroupModel(this.users, this._groups, this._currUser, this.updateGroups);
 
   @override
   _NewGroupModelState createState() => _NewGroupModelState();
@@ -142,11 +145,10 @@ class _NewGroupModelState extends State<NewGroupModel> {
                 widget.newGroupUsers.forEach((user) {
                   usersIdForDB.add(user["userid"]);
                 });
-                //String stringToDB = usersIdForDB.toString();
-                var reqBody =  {
-                      "name": widget.newGroupNameInput.text,
-                      "team_members": usersIdForDB
-                    };
+                var reqBody = {
+                  "name": widget.newGroupNameInput.text,
+                  "team_members": usersIdForDB
+                };
                 var jsonBody = jsonEncode(reqBody);
                 print(jsonBody);
                 final ioc = new HttpClient();
@@ -154,10 +156,21 @@ class _NewGroupModelState extends State<NewGroupModel> {
                     (X509Certificate cert, String host, int port) => true;
                 final http = new IOClient(ioc);
                 await http.post("https://me-kone.herokuapp.com/groups/group",
-                    body:jsonBody , headers: { "accept": "application/json", "content-type": "application/json" }).then((res) {
+                    body: jsonBody,
+                    headers: {
+                      "accept": "application/json",
+                      "content-type": "application/json"
+                    }).then((res) {
                   print("Reponse status : ${res.statusCode}");
                   print("Response body : ${res.body}");
-                });
+                    });
+                    String getReqBody = "https://me-kone.herokuapp.com/groups/" +
+                        widget._currUser["id"].toString();
+                    print(getReqBody);
+                    await http.get(getReqBody).then((res) {
+                      print(res.body);
+                      widget.updateGroups(jsonDecode(res.body));
+                    });
               } catch (e) {
                 print(e.toString());
               }

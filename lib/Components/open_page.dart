@@ -26,6 +26,12 @@ class _OpenPageState extends State<OpenPage> {
     getGroups();
   }
 
+  updateGroups(newGroups){
+    setState(() {
+      widget._groups = newGroups;
+    });
+  }
+
   getGroups() async {
     print("the user connected:");
     print(widget._user);
@@ -110,7 +116,7 @@ class _OpenPageState extends State<OpenPage> {
           title: new Text("קבוצה חדשה",
               textAlign: TextAlign.right,
               style: TextStyle(decoration: TextDecoration.underline)),
-          content: NewGroupModel(widget.users),
+          content: NewGroupModel(widget.users, widget._groups, widget._user, updateGroups),
         );
       },
     );

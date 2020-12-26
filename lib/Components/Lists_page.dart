@@ -29,6 +29,12 @@ class _ListsPageState extends State<ListsPage> {
     return widget.pressedListName;
   }
 
+  updateLists(newLists){
+    setState(() {
+      widget._lists = newLists;
+    });
+  }
+
   Widget _buildRow(BuildContext context, int index) {
     if (index.isEven) {
       return ListTile(
@@ -108,22 +114,7 @@ class _ListsPageState extends State<ListsPage> {
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.underline),
           ),
-          content: NewListModel(),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("Create"),
-              onPressed: () {
-                //add post request
-                Navigator.of(context).pop();
-              },
-            ),
-            new FlatButton(
-              child: new Text("Close"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+          content: NewListModel(widget._userObject, widget._currGroupObject, updateLists),
         );
       },
     );
