@@ -87,6 +87,7 @@ jobs:
 
       - name: Install bundle
         run: |
+          pwd
           bundle config path ./android
           bundle install --jobs 4 --retry 3
 
