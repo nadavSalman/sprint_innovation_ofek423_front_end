@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'products_list_page.dart';
 import 'package:intl/intl.dart' as intl;
+import 'New_list_model.dart';
 
-class ListsPage extends StatelessWidget {
+class ListsPage extends StatefulWidget {
   List _lists;
   var _userObject;
   var _currGroupObject;
@@ -10,13 +11,22 @@ class ListsPage extends StatelessWidget {
   var pressedListName;
   var _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-  ListsPage(this._lists, this._userObject, this._currGroupObject, this._allUsers);
-  
-  getListName(int index){
-    print(_lists[index ~/ 2]["listcreator"]);
-    var result =_allUsers.firstWhere((obj) => obj["userid"] == _lists[index ~/ 2]["listcreator"]);
-    pressedListName = result["userfullname"]+" ב"+_lists[index ~/ 2]["purchaselocation"];
-    return pressedListName;
+  ListsPage(
+      this._lists, this._userObject, this._currGroupObject, this._allUsers);
+
+  @override
+  _ListsPageState createState() => _ListsPageState();
+}
+
+class _ListsPageState extends State<ListsPage> {
+  getListName(int index) {
+    print(widget._lists[index ~/ 2]["listcreator"]);
+    var result = widget._allUsers.firstWhere(
+        (obj) => obj["userid"] == widget._lists[index ~/ 2]["listcreator"]);
+    widget.pressedListName = result["userfullname"] +
+        " ב" +
+        widget._lists[index ~/ 2]["purchaselocation"];
+    return widget.pressedListName;
   }
 
   Widget _buildRow(BuildContext context, int index) {
@@ -30,20 +40,22 @@ class ListsPage extends StatelessWidget {
           ),
         ),
         subtitle: Text(
-          intl.DateFormat('dd-MM-yyyy – hh:mm').format(DateTime.parse(_lists[index ~/ 2]["listpurchasedate"])),
+          intl.DateFormat('dd-MM-yyyy – hh:mm').format(
+              DateTime.parse(widget._lists[index ~/ 2]["listpurchasedate"])),
           textDirection: TextDirection.rtl,
-          // style: TextStyle(
-          //   fontSize: 20,
-          // ),
         ),
         onTap: () {
           // need to get from the server all the lists for the right username and right group and send to lists page
-          pressedListName = getListName(index);
+          widget.pressedListName = getListName(index);
           Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => ProductsListPage(
-                    _lists[index ~/ 2], this._userObject, _currGroupObject, pressedListName, this._allUsers)),
+                    widget._lists[index ~/ 2],
+                    widget._userObject,
+                    widget._currGroupObject,
+                    widget.pressedListName,
+                    widget._allUsers)),
           );
         },
       );
@@ -61,7 +73,7 @@ class ListsPage extends StatelessWidget {
           child: Column(children: <Widget>[
             new ListTile(
               title: Text(
-                this._currGroupObject["teamname"],
+                widget._currGroupObject["teamname"],
                 style: TextStyle(
                   fontSize: 30,
                 ),
@@ -75,7 +87,7 @@ class ListsPage extends StatelessWidget {
                   shrinkWrap: true,
                   padding: EdgeInsets.all(16),
                   itemBuilder: _buildRow,
-                  itemCount: _lists.length * 2,
+                  itemCount: widget._lists.length * 2,
                 ))
           ]),
         )));
@@ -84,14 +96,27 @@ class ListsPage extends StatelessWidget {
   void _showDialog() {
     // flutter defined function
     showDialog(
-      context: _scaffoldKey.currentContext,
+      context: widget._scaffoldKey.currentContext,
       builder: (BuildContext context) {
         // return object of type Dialog
         return AlertDialog(
-          title: new Text("Alert Dialog title"),
-          content: new Text("Alert Dialog body"),
+          title: new Text(
+            "הוספת רשימה חדשה",
+            textAlign: TextAlign.right,
+            style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline),
+          ),
+          content: NewListModel(),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Create"),
+              onPressed: () {
+                //add post request
+                Navigator.of(context).pop();
+              },
+            ),
             new FlatButton(
               child: new Text("Close"),
               onPressed: () {
@@ -107,7 +132,7 @@ class ListsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
+      key: widget._scaffoldKey,
       appBar: AppBar(
         title: Text(
           'Meקונה',
