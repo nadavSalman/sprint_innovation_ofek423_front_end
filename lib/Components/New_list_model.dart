@@ -93,7 +93,7 @@ class _NewListModelState extends State<NewListModel> {
             onPressed: () async {
               try {
                 DateTime newDateToDB = new DateTime(widget.selectedDate.year, widget.selectedDate.month, widget.selectedDate.day, widget.selectedTime.hour, widget.selectedTime.minute);
-                String dateInString = newDateToDB.toIso8601String();
+                String dateInString = newDateToDB.toIso8601String()+"Z";
                 var newListToDB;
                 newListToDB = {
                   "team": widget.currGroupObject["teamid"],
