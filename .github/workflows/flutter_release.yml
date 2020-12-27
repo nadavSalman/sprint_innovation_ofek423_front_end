@@ -3,7 +3,7 @@ name: Flutter CI-CD
 # trigger condition for the action
 on:
   push:
-    branches: [GogglePlay]
+    branches: [Dev]
   # pull_request:
   #   branches: [main]
 
