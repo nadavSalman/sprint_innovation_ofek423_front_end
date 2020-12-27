@@ -140,7 +140,7 @@ class _ProductsListPageState extends State<ProductsListPage> {
           mainAxisAlignment:
                 MainAxisAlignment.end,
            children: [
-        Container(padding: const EdgeInsets.all(45), child: Text('Meקונה',
+        Container(padding: const EdgeInsets.all(40), child: Text('Meקונה',
         style: TextStyle(
             fontSize: 22,
           ),)),
