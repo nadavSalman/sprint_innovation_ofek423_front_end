@@ -56,7 +56,7 @@ jobs:
       - run: flutter pub get
       #run tests :
       - run: flutter test
-#       - run: flutter build appbundle
+      - run: flutter build appbundle
       - run: flutter build apk
 
       - name: Push APK to Releases - save artifact
