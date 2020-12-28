@@ -37,22 +37,6 @@ jobs:
           # The Flutter build release channel
           #channel: # optional, default is stable #should be modified when deploying a web version
       #install dependecies :
-      - name: Configure Keystore
-        run: |
-           pwd
-           echo "$ANDROID_KEYSTORE_FILE" > upload_key.jks.b64
-           base64 -d -i upload_key.jks.b64 > ./android/app/upload_key.jks
-           echo "storeFile=upload_key.jks" >> ./android/key.properties
-           echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> ./android/key.properties
-           echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> ./android/key.properties
-           echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> ./android/key.properties
-           pwd
-        env:
-           ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
-           KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
-           KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
-           KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
-
       - run: flutter pub get
       #run tests :
       - run: flutter test
@@ -65,18 +49,35 @@ jobs:
           name: apk-artifact
           path: "./build/app/outputs/flutter-apk/app-release.apk"
 
-      - uses: actions/setup-ruby@v1
-        with:
-          ruby-version: "2.7"
 
-      - name: Install bundle
-        run: |
-          pwd
-          ls -R
-          bundle config path vendor/bundle
-          bundle install --jobs 4 --retry 3
+#       - name: Configure Keystore
+#         run: |
+#            pwd
+#            echo "$ANDROID_KEYSTORE_FILE" > upload_key.jks.b64
+#            base64 -d -i upload_key.jks.b64 > ./android/app/upload_key.jks
+#            echo "storeFile=upload_key.jks" >> ./android/key.properties
+#            echo "keyAlias=$KEYSTORE_KEY_ALIAS" >> ./android/key.properties
+#            echo "storePassword=$KEYSTORE_STORE_PASSWORD" >> ./android/key.properties
+#            echo "keyPassword=$KEYSTORE_KEY_PASSWORD" >> ./android/key.properties
+#            pwd
+#         env:
+#            ANDROID_KEYSTORE_FILE: ${{ secrets.ANDROID_KEYSTORE_FILE }}
+#            KEYSTORE_KEY_ALIAS: ${{ secrets.KEYSTORE_KEY_ALIAS }}
+#            KEYSTORE_KEY_PASSWORD: ${{ secrets.KEYSTORE_KEY_PASSWORD }}
+#            KEYSTORE_STORE_PASSWORD: ${{ secrets.KEYSTORE_STORE_PASSWORD }}
 
-      - name: Distribute app to Alpha track 🚀
-        run: |
-          cd ./android
-          bundle exec fastlane alpha
+#       - uses: actions/setup-ruby@v1
+#         with:
+#           ruby-version: "2.7"
+
+#       - name: Install bundle
+#         run: |
+#           pwd
+#           ls -R
+#           bundle config path vendor/bundle
+#           bundle install --jobs 4 --retry 3
+
+#       - name: Distribute app to Alpha track 🚀
+#         run: |
+#           cd ./android
+#           bundle exec fastlane alpha
