@@ -26,7 +26,6 @@ class SignUpScreen extends StatelessWidget {
     return Scaffold(
         backgroundColor: Colors.yellow[600],
         body: Center(
-          child: new Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -42,7 +41,7 @@ class SignUpScreen extends StatelessWidget {
                   ),
                 ),
               ]),
-        )));
+        ));
   }
 }
 
