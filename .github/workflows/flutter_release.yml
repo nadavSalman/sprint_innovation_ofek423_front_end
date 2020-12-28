@@ -57,12 +57,13 @@ jobs:
       #run tests :
       - run: flutter test
       - run: flutter build appbundle
+      - run: flutter build apk
 
       - name: Push APK to Releases - save artifact
         uses: actions/upload-artifact@v2
         with:
-          name: aab-artifact
-          path: "./build/app/outputs/bundle/release/app-release.aab"
+          name: apk-artifact
+          path: "./build/app/outputs/flutter-apk/app-release.apk"
 
       - uses: actions/setup-ruby@v1
         with:
